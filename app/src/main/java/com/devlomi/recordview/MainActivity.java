@@ -2,7 +2,6 @@ package com.devlomi.recordview;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +14,8 @@ import com.devlomi.record_view.RecordButton;
 import com.devlomi.record_view.RecordView;
 
 import java.util.concurrent.TimeUnit;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
