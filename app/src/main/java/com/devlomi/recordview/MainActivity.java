@@ -11,6 +11,7 @@ import com.devlomi.record_view.OnBasketAnimationEnd;
 import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordLayout;
 import com.devlomi.record_view.RecordView;
 
 import java.util.concurrent.TimeUnit;
@@ -18,19 +19,14 @@ import java.util.concurrent.TimeUnit;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-
+    RecordLayout layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        RecordView recordView = (RecordView) findViewById(R.id.record_view);
-        final RecordButton recordButton = (RecordButton) findViewById(R.id.record_button);
+        setContentView(R.layout.activity_main2);
+        layout = findViewById(R.id.record_layout);
         Button btnChangeOnclick = (Button) findViewById(R.id.btn_change_onclick);
-
-        //IMPORTANT
-        recordButton.setRecordView(recordView);
 
         // if you want to click the button (in case if you want to make the record button a Send Button for example..)
 //        recordButton.setListenForRecord(false);
@@ -39,18 +35,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (recordButton.isListenForRecord()) {
-                    recordButton.setListenForRecord(false);
+                if (layout.isListenForRecord()) {
+                    layout.setListenForRecord(false);
                     Toast.makeText(MainActivity.this, "onClickEnabled", Toast.LENGTH_SHORT).show();
                 } else {
-                    recordButton.setListenForRecord(true);
+                    layout.setListenForRecord(true);
                     Toast.makeText(MainActivity.this, "onClickDisabled", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         //ListenForRecord must be false ,otherwise onClick will not be called
-        recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+        layout.setOnRecordClickListener(new OnRecordClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
@@ -60,22 +56,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Cancel Bounds is when the Slide To Cancel text gets before the timer . default is 8
-        recordView.setCancelBounds(8);
+        layout.setCancelBounds(8);
 
 
-        recordView.setSmallMicColor(Color.parseColor("#c2185b"));
+        layout.setSmallMicColor(Color.parseColor("#c2185b"));
 
         //prevent recording under one Second
-        recordView.setLessThanSecondAllowed(false);
+        layout.setLessThanSecondAllowed(false);
 
 
-        recordView.setSlideToCancelText("Slide To Cancel");
+        layout.setSlideToCancelText("Slide To Cancel");
 
 
-        recordView.setCustomSounds(R.raw.record_start, R.raw.record_finished, 0);
+        layout.setCustomSounds(R.raw.record_start, R.raw.record_finished, 0);
 
 
-        recordView.setOnRecordListener(new OnRecordListener() {
+        layout.setOnRecordListener(new OnRecordListener() {
             @Override
             public void onStart() {
                 Log.d("RecordView", "onStart");
@@ -109,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
+        layout.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
             @Override
             public void onAnimationEnd() {
                 Log.d("RecordView", "Basket Animation Finished");

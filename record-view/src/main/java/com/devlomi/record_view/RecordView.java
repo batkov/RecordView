@@ -19,13 +19,14 @@ import java.io.IOException;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import io.supercharge.shimmerlayout.ShimmerLayout;
 
 /**
  * Created by Devlomi on 24/08/2017.
  */
 
-public class RecordView extends RelativeLayout {
+public class RecordView extends ConstraintLayout {
 
     public static final int DEFAULT_CANCEL_BOUNDS = 8; //8dp
     private ImageView smallBlinkingMic, basketImg;
@@ -67,19 +68,16 @@ public class RecordView extends RelativeLayout {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        View view = View.inflate(context, R.layout.record_view_layout, null);
-        addView(view);
+        View view = View.inflate(context, R.layout.record_view_layout, this);
 
+        setClipChildren(false);
 
-        ViewGroup viewGroup = (ViewGroup) view.getParent();
-        viewGroup.setClipChildren(false);
-
-        arrow = view.findViewById(R.id.arrow);
-        slideToCancel = view.findViewById(R.id.slide_to_cancel);
-        smallBlinkingMic = view.findViewById(R.id.glowing_mic);
-        counterTime = view.findViewById(R.id.counter_tv);
-        basketImg = view.findViewById(R.id.basket_img);
-        slideToCancelLayout = view.findViewById(R.id.shimmer_layout);
+        arrow = findViewById(R.id.arrow);
+        slideToCancel = findViewById(R.id.slide_to_cancel);
+        smallBlinkingMic = findViewById(R.id.glowing_mic);
+        counterTime = findViewById(R.id.counter_tv);
+        basketImg = findViewById(R.id.basket_img);
+        slideToCancelLayout = findViewById(R.id.shimmer_layout);
 
 
         hideViews(true);
@@ -320,12 +318,12 @@ public class RecordView extends RelativeLayout {
 
 
     private void setMarginRight(int marginRight, boolean convertToDp) {
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) slideToCancelLayout.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) slideToCancelLayout.getLayoutParams();
+        int margin = marginRight;
         if (convertToDp) {
-            layoutParams.rightMargin = (int) DpUtil.toPixel(marginRight, context);
-        } else
-            layoutParams.rightMargin = marginRight;
-
+            margin = (int) DpUtil.toPixel(marginRight, context);
+        }
+        layoutParams.setMarginEnd(margin);
         slideToCancelLayout.setLayoutParams(layoutParams);
     }
 

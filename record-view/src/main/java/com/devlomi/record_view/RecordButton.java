@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,14 @@ public class RecordButton extends AppCompatImageView implements View.OnTouchList
 
     private ScaleAnim scaleAnim;
     private RecordView recordView;
+    private LockView lockView;
     private boolean listenForRecord = true;
     private OnRecordClickListener onRecordClickListener;
+
+    private int initialY = 0;
+    private int initialX = 0;
+    private static final int THRESHOLD = 10;
+    Boolean lockedHorizontal = null;
 
 
     public void setRecordView(RecordView recordView) {
@@ -102,16 +109,63 @@ public class RecordButton extends AppCompatImageView implements View.OnTouchList
             switch (event.getAction()) {
 
                 case MotionEvent.ACTION_DOWN:
-                    recordView.onActionDown((RecordButton) v, event);
+
+                    initialX = (int) event.getRawX();
+                    initialY = (int) event.getRawY();
+                    if (recordView != null) {
+                        recordView.onActionDown((RecordButton) v, event);
+                    }
+                    if (lockView != null) {
+                        lockView.onActionDown((RecordButton) v, event);
+                    }
                     break;
 
 
                 case MotionEvent.ACTION_MOVE:
-                    recordView.onActionMove((RecordButton) v, event);
+                    int theX = (int) event.getRawX();
+                    int theY = (int) event.getRawY();
+                    int y = Math.min(theY - initialY, 0);
+                    int x = Math.min(theX - initialX, 0);
+                    Log.d("RecordButton", "initialX: " + initialX + " initialY: " + initialY);
+                    Log.d("RecordButton", "theX: " + theX + " theY: " + theY);
+                    Log.d("RecordButton", "x: " + x + " y: " + y);
+                    boolean threshold = Math.abs(y) > THRESHOLD || Math.abs(x) > THRESHOLD;
+                    if (!threshold) {
+                        Log.d("RecordButton", "threshold drop");
+                        break;
+                    }
+                    if (lockedHorizontal == null) {
+                        lockedHorizontal = Math.abs(y) < Math.abs(x);
+                        Log.d("RecordButton", "lockedHorizontal set:" + lockedHorizontal);
+                    }
+                    if (lockedHorizontal && x >= 0) {
+                        lockedHorizontal = null;
+                        Log.d("RecordButton", "drop lock, x >= 0");
+                        break;
+                    }
+                    if (!lockedHorizontal && y >= 0) {
+                        lockedHorizontal = null;
+                        Log.d("RecordButton", "drop lock, y >= 0");
+                        break;
+                    }
+                    if (recordView != null && lockedHorizontal) {
+                        Log.d("RecordButton", "send to record view");
+                        recordView.onActionMove((RecordButton) v, event);
+                    }
+                    if (lockView != null && !lockedHorizontal) {
+                        Log.d("RecordButton", "send to lock view");
+                        lockView.onActionMove((RecordButton) v, event);
+                    }
                     break;
 
                 case MotionEvent.ACTION_UP:
-                    recordView.onActionUp((RecordButton) v);
+                    lockedHorizontal = null;
+                    if (recordView != null) {
+                        recordView.onActionUp((RecordButton) v);
+                    }
+                    if (lockView != null) {
+                        lockView.onActionUp((RecordButton) v);
+                    }
                     break;
 
             }
@@ -148,5 +202,9 @@ public class RecordButton extends AppCompatImageView implements View.OnTouchList
     public void onClick(View v) {
         if (onRecordClickListener != null)
             onRecordClickListener.onClick(v);
+    }
+
+    public void setLockView(LockView lockView) {
+        this.lockView = lockView;
     }
 }

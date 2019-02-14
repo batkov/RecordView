@@ -10,6 +10,13 @@
 
     </declare-styleable>
 
+    <declare-styleable name="LockView">
+        <attr name="lock_arrow" format="reference" />
+        <attr name="lock_image" format="reference" />
+        <attr name="unlock_image" format="reference" />
+        <attr name="stop_image" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="RecordButton">
 
         <attr name="mic_icon" format="reference" />
